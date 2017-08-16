@@ -127,6 +127,7 @@ namespace Jurassic.Compiler
             this.Body.GenerateCode(generator, optimizationInfo);
             optimizationInfo.PopBreakOrContinueInfo();
 
+            optimizationInfo.TryEmitUserCodeOnLoopOrFuncCall(generator);
             generator.Branch(continueTarget);
             generator.DefineLabelPosition(breakTarget);
 

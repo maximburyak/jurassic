@@ -881,6 +881,7 @@ namespace Jurassic
                 EnableDebugging = this.EnableDebugging,
                 CompatibilityMode = this.CompatibilityMode,
                 EnableILAnalysis = this.EnableILAnalysis,
+                EmitUserCodeOnLoopOrFuncCall = this.OnLoopOrFuncCall!=null
             };
         }
 
@@ -1367,6 +1368,16 @@ namespace Jurassic
                     this.staticTypeWrapperCache = new Dictionary<Type, ClrStaticTypeWrapper>();
                 return this.staticTypeWrapperCache;
             }
+        }
+
+        //     Emit OnBranch call
+        //_________________________________________________________________________________________
+
+        public Action OnLoopOrFuncCall;
+
+        public void CallOnBrach()
+        {
+            OnLoopOrFuncCall?.Invoke();
         }
     }
 }

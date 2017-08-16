@@ -409,6 +409,30 @@ namespace Jurassic.Compiler
             set;
         }
 
+        public bool EmitUserCodeOnLoopOrFuncCall { get; set; }
+
+        public void TryEmitUserCodeOnLoopOrFuncCall(ILGenerator generator)
+        {
+            if (EmitUserCodeOnLoopOrFuncCall)
+            {
+                generator.LoadArgument(0);
+                var fieldInfo = typeof(ScriptEngine).GetField(nameof(ScriptEngine.OnLoopOrFuncCall));
+                var methodInfo = typeof(ScriptEngine).GetMethod(nameof(ScriptEngine.CallOnBrach));
+
+                var label = generator.CreateLabel();
+                generator.LoadField(fieldInfo);
+                generator.LoadNull();
+                generator.CompareEqual();
+
+                generator.BranchIfNotZero(label);
+
+                generator.LoadArgument(0);
+                generator.Call(methodInfo);
+
+                generator.DefineLabelPosition(label);
+            }
+        }
+
         /// <summary>
         /// Emits code to branch between statements, even if code generation is within a finally
         /// block (where unconditional branches are not allowed).

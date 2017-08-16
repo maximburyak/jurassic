@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using OpCodes = System.Reflection.Emit.OpCodes;
 
 namespace Jurassic.Compiler
@@ -89,7 +90,29 @@ namespace Jurassic.Compiler
         {
             if (label as ReflectionEmitILLabel == null)
                 throw new ArgumentNullException(nameof(label));
+            //EmitOnBranchCall();
             this.generator.Emit(OpCodes.Br, ((ReflectionEmitILLabel)label).UnderlyingLabel);
+        }
+
+        private void EmitOnBranchCall()
+        {
+            var doNotCallLabel = generator.DefineLabel();
+            // need to get the actual target for this from the script engine
+            generator.Emit(OpCodes.Ldarg_0);
+
+            var fieldInfo = typeof(ScriptEngine).GetField(nameof(ScriptEngine.OnLoopOrFuncCall));
+            var methodInfo = typeof(ScriptEngine).GetMethod(nameof(ScriptEngine.CallOnBrach));
+                
+            generator.Emit(OpCodes.Ldfld, fieldInfo);
+            generator.Emit(OpCodes.Ldnull);
+            generator.Emit(OpCodes.Ceq);
+            
+            generator.Emit(OpCodes.Brtrue, doNotCallLabel);
+
+            generator.Emit(OpCodes.Ldarg_0);
+            generator.EmitCall(OpCodes.Call, methodInfo,new Type[0]);
+
+            generator.MarkLabel(doNotCallLabel);
         }
 
         /// <summary>

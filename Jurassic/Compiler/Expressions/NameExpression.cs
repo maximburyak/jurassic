@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Emit;
 using ErrorType = Jurassic.Library.ErrorType;
 
 namespace Jurassic.Compiler
@@ -193,6 +194,9 @@ namespace Jurassic.Compiler
                             generator.CastClass(typeof(DeclarativeScope));
                             generator.LoadString(this.Name);
                             generator.Call(ReflectionHelpers.Scope_GetValue);
+                            
+                            optimizationInfo.TryEmitUserCodeOnLoopOrFuncCall(generator);
+                           
                             generator.Branch(endOfGet);
 
                             // }
@@ -246,6 +250,7 @@ namespace Jurassic.Compiler
                         generator.Call(ReflectionHelpers.ObjectInstance_InlineGetPropertyValue);
 
                         var endOfIf = generator.CreateLabel();
+                        optimizationInfo.TryEmitUserCodeOnLoopOrFuncCall(generator);
                         generator.Branch(endOfIf);
 
                         // else
