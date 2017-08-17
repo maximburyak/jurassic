@@ -37,64 +37,64 @@ namespace Jurassic.Compiler
     /// <summary>
     /// Represents a local variable in CIL code.
     /// </summary>
-    internal class DynamicILLocalVariable : ILLocalVariable
-    {
-        private int index;
-        private Type type;
-        private string name;
+    //internal class DynamicILLocalVariable : ILLocalVariable
+    //{
+    //    private int index;
+    //    private Type type;
+    //    private string name;
 
-        /// <summary>
-        /// Creates a new local variable instance.
-        /// </summary>
-        /// <param name="generator"> The generator that created this variable. </param>
-        /// <param name="index"> The index of the local variable within the method body. </param>
-        /// <param name="type"> The type of the variable. </param>
-        /// <param name="name"> The name of the local variable.  Can be <c>null</c>. </param>
-        public DynamicILLocalVariable(DynamicILGenerator generator, int index, Type type, string name)
-        {
-            if (index < 0)
-                throw new ArgumentOutOfRangeException("index");
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
-            this.ILGenerator = generator;
-            this.index = index;
-            this.type = type;
-            this.name = name;
-        }
+    //    /// <summary>
+    //    /// Creates a new local variable instance.
+    //    /// </summary>
+    //    /// <param name="generator"> The generator that created this variable. </param>
+    //    /// <param name="index"> The index of the local variable within the method body. </param>
+    //    /// <param name="type"> The type of the variable. </param>
+    //    /// <param name="name"> The name of the local variable.  Can be <c>null</c>. </param>
+    //    public DynamicILLocalVariable(DynamicILGenerator generator, int index, Type type, string name)
+    //    {
+    //        if (index < 0)
+    //            throw new ArgumentOutOfRangeException("index");
+    //        if (type == null)
+    //            throw new ArgumentNullException(nameof(type));
+    //        this.ILGenerator = generator;
+    //        this.index = index;
+    //        this.type = type;
+    //        this.name = name;
+    //    }
 
-        /// <summary>
-        /// Gets the generator that created this variable.
-        /// </summary>
-        public DynamicILGenerator ILGenerator
-        {
-            get;
-            private set;
-        }
+    //    /// <summary>
+    //    /// Gets the generator that created this variable.
+    //    /// </summary>
+    //    public DynamicILGenerator ILGenerator
+    //    {
+    //        get;
+    //        private set;
+    //    }
 
-        /// <summary>
-        /// Gets the zero-based index of the local variable within the method body.
-        /// </summary>
-        public override int Index
-        {
-            get { return this.index; }
-        }
+    //    /// <summary>
+    //    /// Gets the zero-based index of the local variable within the method body.
+    //    /// </summary>
+    //    public override int Index
+    //    {
+    //        get { return this.index; }
+    //    }
 
-        /// <summary>
-        /// Gets the type of the local variable.
-        /// </summary>
-        public override Type Type
-        {
-            get { return this.type; }
-        }
+    //    /// <summary>
+    //    /// Gets the type of the local variable.
+    //    /// </summary>
+    //    public override Type Type
+    //    {
+    //        get { return this.type; }
+    //    }
 
-        /// <summary>
-        /// Gets the local variable name, or <c>null</c> if a name was not provided.
-        /// </summary>
-        public override string Name
-        {
-            get { return this.name; }
-        }
-    }
+    //    /// <summary>
+    //    /// Gets the local variable name, or <c>null</c> if a name was not provided.
+    //    /// </summary>
+    //    public override string Name
+    //    {
+    //        get { return this.name; }
+    //    }
+    //}
 
     /// <summary>
     /// Represents a local variable in CIL code.

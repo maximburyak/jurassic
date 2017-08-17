@@ -90,11 +90,11 @@ namespace Jurassic.Compiler
         /// <param name="locals"> Variables common to both GenerateStartOfStatement() and GenerateEndOfStatement(). </param>
         public void GenerateStartOfStatement(ILGenerator generator, OptimizationInfo optimizationInfo, StatementLocals locals)
         {
-#if DEBUG
-            // Statements must not produce or consume any values on the stack.
-            if (generator is DynamicILGenerator)
-                locals.OriginalStackSize = ((DynamicILGenerator)generator).StackSize;
-#endif
+//#if DEBUG
+//            // Statements must not produce or consume any values on the stack.
+//            if (generator is DynamicILGenerator)
+//                locals.OriginalStackSize = ((DynamicILGenerator)generator).StackSize;
+//#endif
 
             if (locals.NonDefaultBreakStatementBehavior == false && this.HasLabels == true)
             {
@@ -123,11 +123,11 @@ namespace Jurassic.Compiler
                 optimizationInfo.PopBreakOrContinueInfo();
             }
 
-#if DEBUG
-            // Check that the stack count is zero.
-            if (generator is DynamicILGenerator && ((DynamicILGenerator)generator).StackSize != locals.OriginalStackSize)
-                throw new InvalidOperationException("Encountered unexpected stack imbalance.");
-#endif
+//#if DEBUG
+//            // Check that the stack count is zero.
+//            if (generator is DynamicILGenerator && ((DynamicILGenerator)generator).StackSize != locals.OriginalStackSize)
+//                throw new InvalidOperationException("Encountered unexpected stack imbalance.");
+//#endif
         }
 
         /// <summary>

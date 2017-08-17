@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Emit;
 
 namespace Jurassic.Compiler
 {
@@ -181,42 +182,42 @@ namespace Jurassic.Compiler
             
 
             ILGenerator generator;
-            if (this.Options.EnableDebugging == false)
-            {
-                // DynamicMethod requires full trust because of generator.LoadMethodPointer in the
-                // FunctionExpression class.
+            //            if (this.Options.EnableDebugging == false)
+            //            {
+            //                // DynamicMethod requires full trust because of generator.LoadMethodPointer in the
+            //                // FunctionExpression class.
 
-                // Create a new dynamic method.
-                System.Reflection.Emit.DynamicMethod dynamicMethod = new System.Reflection.Emit.DynamicMethod(
-                    GetMethodName(),                                        // Name of the generated method.
-                    typeof(object),                                         // Return type of the generated method.
-                    GetParameterTypes(),                                    // Parameter types of the generated method.
-                    typeof(MethodGenerator),                                // Owner type.
-                    true);                                                  // Skip visibility checks.
-#if __MonoCS__
-                generator = new ReflectionEmitILGenerator(dynamicMethod.GetILGenerator());
-#else
-                generator = new DynamicILGenerator(dynamicMethod);
-#endif
+            //                // Create a new dynamic method.
+            //                System.Reflection.Emit.DynamicMethod dynamicMethod = new System.Reflection.Emit.DynamicMethod(
+            //                    GetMethodName(),                                        // Name of the generated method.
+            //                    typeof(object),                                         // Return type of the generated method.
+            //                    GetParameterTypes(),                                    // Parameter types of the generated method.
+            //                    typeof(MethodGenerator),                                // Owner type.
+            //                    true);                                                  // Skip visibility checks.
+            //#if __MonoCS__
+            //                generator = new ReflectionEmitILGenerator(dynamicMethod.GetILGenerator());
+            //#else
+            //                generator = new DynamicILGenerator(dynamicMethod);
+            //#endif
 
-                if (this.Options.EnableILAnalysis == true)
-                {
-                    // Replace the generator with one that logs.
-                    generator = new LoggingILGenerator(generator);
-                }
+            //                if (this.Options.EnableILAnalysis == true)
+            //                {
+            //                    // Replace the generator with one that logs.
+            //                    generator = new LoggingILGenerator(generator);
+            //                }
 
-                // Initialization code will appear to come from line 1.
-                optimizationInfo.MarkSequencePoint(generator, new SourceCodeSpan(1, 1, 1, 1));
+            //                // Initialization code will appear to come from line 1.
+            //                optimizationInfo.MarkSequencePoint(generator, new SourceCodeSpan(1, 1, 1, 1));
 
-                // Generate the IL.
-                GenerateCode(generator, optimizationInfo);
-                generator.Complete();
+            //                // Generate the IL.
+            //                GenerateCode(generator, optimizationInfo);
+            //                generator.Complete();
 
-                // Create a delegate from the method.
-                this.GeneratedMethod = new GeneratedMethod(dynamicMethod.CreateDelegate(GetDelegate()), optimizationInfo.NestedFunctions);
+            //                // Create a delegate from the method.
+            //                this.GeneratedMethod = new GeneratedMethod(dynamicMethod.CreateDelegate(GetDelegate()), optimizationInfo.NestedFunctions);
 
-            }
-            else
+            //            }
+            //            else
             {
 #if WINDOWS_PHONE
                 throw new NotImplementedException();
@@ -232,8 +233,8 @@ namespace Jurassic.Compiler
                         reflectionEmitInfo = new ReflectionEmitModuleInfo();
 
                         // Create a dynamic assembly and module.
-                        reflectionEmitInfo.AssemblyBuilder = System.Threading.Thread.GetDomain().DefineDynamicAssembly(
-                            new System.Reflection.AssemblyName("Jurassic Dynamic Assembly"), System.Reflection.Emit.AssemblyBuilderAccess.Run);
+                        reflectionEmitInfo.AssemblyBuilder =
+                            AssemblyBuilder.DefineDynamicAssembly(new System.Reflection.AssemblyName("Jurassic Dynamic Assembly"), System.Reflection.Emit.AssemblyBuilderAccess.Run);
 
                         // Mark the assembly as debuggable.  This must be done before the module is created.
                         var debuggableAttributeConstructor = typeof(System.Diagnostics.DebuggableAttribute).GetConstructor(
@@ -245,7 +246,7 @@ namespace Jurassic.Compiler
                                 System.Diagnostics.DebuggableAttribute.DebuggingModes.Default }));
 
                         // Create a dynamic module.
-                        reflectionEmitInfo.ModuleBuilder = reflectionEmitInfo.AssemblyBuilder.DefineDynamicModule("Module", this.Options.EnableDebugging);
+                        reflectionEmitInfo.ModuleBuilder = reflectionEmitInfo.AssemblyBuilder.DefineDynamicModule("Module");
 
                         ReflectionEmitInfo = reflectionEmitInfo;
                     }
@@ -272,7 +273,7 @@ namespace Jurassic.Compiler
                 if (this.Source.Path != null && this.Options.EnableDebugging == true)
                 {
                     // Initialize the debugging information.
-                    optimizationInfo.DebugDocument = reflectionEmitInfo.ModuleBuilder.DefineDocument(this.Source.Path, COMHelpers.LanguageType, COMHelpers.LanguageVendor, COMHelpers.DocumentType);
+                    //optimizationInfo.DebugDocument = reflectionEmitInfo.ModuleBuilder.DefineDocument(this.Source.Path, COMHelpers.LanguageType, COMHelpers.LanguageVendor, COMHelpers.DocumentType);
                     methodBuilder.DefineParameter(1, System.Reflection.ParameterAttributes.None, "scriptEngine");
                     methodBuilder.DefineParameter(2, System.Reflection.ParameterAttributes.None, "scope");
                     methodBuilder.DefineParameter(3, System.Reflection.ParameterAttributes.None, "thisValue");
@@ -282,7 +283,7 @@ namespace Jurassic.Compiler
                 generator.Complete();
 
                 // Bake it.
-                var type = typeBuilder.CreateType();
+                var type = typeBuilder.CreateTypeInfo();
                 var methodInfo = type.GetMethod(this.GetMethodName());
                 this.GeneratedMethod = new GeneratedMethod(Delegate.CreateDelegate(GetDelegate(), methodInfo), optimizationInfo.NestedFunctions);
 #endif //WINDOWS_PHONE

@@ -118,12 +118,9 @@ namespace Jurassic.Compiler
                 new Type[] { typeof(ScriptEngine), typeof(object), typeof(object[]) },                          // Parameter types of the generated method.
                 typeof(JSBinder),                                                                               // Owner type.
                 true);                                                                                          // Skips visibility checks.
+            
             ILGenerator generator;
-#if __MonoCS__
             generator = new ReflectionEmitILGenerator(dm.GetILGenerator());
-#else
-            generator = new DynamicILGenerator(dm);
-#endif
 
             // Generate the body of the method.
             GenerateStub(generator, argumentCount);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using OpCodes = System.Reflection.Emit.OpCodes;
 
 namespace Jurassic.Compiler
@@ -1133,7 +1134,13 @@ namespace Jurassic.Compiler
         /// <param name="endColumn"> The column in the line where the sequence point ends. </param>
         public override void MarkSequencePoint(System.Diagnostics.SymbolStore.ISymbolDocumentWriter document, int startLine, int startColumn, int endLine, int endColumn)
         {
-            this.generator.MarkSequencePoint(document, startLine, startColumn, endLine, endColumn);
+            //this.generator.MarkSequencePoint(document, startLine, startColumn, endLine, endColumn);
+            if (startLine == 0 || startLine < 0 || endLine == 0 || endLine < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(startLine));
+            }
+            // ReSharper disable once InvocationIsSkipped
+            Contract.EndContractBlock();
         }
 
 
